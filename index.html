@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SwiftLingo - Multi-Language Learning App</title>
+  <title>SwiftLingo - Single Language Focus</title>
   <style>
     :root {
       --bg-color: #f8fafc;
       --card-bg: #ffffff;
       --primary: #2563eb;
-      --primary-hover: #1d4ed8;
       --text: #0f172a;
       --subtext: #64748b;
       --border: #e2e8f0;
+      --success: #16a34a;
+      --error: #dc2626;
     }
 
     * {
@@ -51,68 +52,74 @@
       margin-bottom: 4px;
     }
 
-    .header p {
-      font-size: 13px;
-      color: var(--subtext);
+    /* Language Target Selection Dropdown/Buttons */
+    .target-lang-box {
+      margin-bottom: 16px;
+      background: #eff6ff;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #bfdbfe;
+      text-align: center;
     }
 
-    /* Category Filter Tabs */
-    .category-container {
+    .target-lang-box label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--subtext);
+      margin-bottom: 6px;
+    }
+
+    .lang-select-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .lang-option-btn {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .lang-option-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Mode Switcher Tabs */
+    .mode-switcher {
       display: flex;
       gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
       margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
     }
 
-    .category-btn {
-      white-space: nowrap;
-      padding: 6px 12px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background: #f1f5f9;
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .category-btn.active {
-      background: var(--text);
-      color: white;
-      border-color: var(--text);
-    }
-
-    /* Swift Language Switcher */
-    .lang-switcher {
-      display: flex;
-      gap: 6px;
-      background: #f1f5f9;
-      padding: 4px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-
-    .lang-btn {
+    .mode-btn {
       flex: 1;
       padding: 8px;
       border: none;
       background: transparent;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 13px;
+      font-weight: bold;
+      font-size: 14px;
       color: var(--subtext);
-      transition: all 0.2s;
+      cursor: pointer;
+      border-radius: 8px;
     }
 
-    .lang-btn.active {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    .mode-btn.active {
+      background: #f1f5f9;
+      color: var(--primary);
     }
 
-    /* Flashcard UI */
+    /* Learn View UI */
     .flashcard {
       border: 2px solid var(--border);
       border-radius: 16px;
@@ -122,46 +129,41 @@
       background: #fafafa;
     }
 
-    .myanmar-meaning {
-      font-size: 26px;
-      font-weight: bold;
-      color: var(--primary);
-      margin-bottom: 12px;
-    }
-
     .target-word {
       font-size: 32px;
       font-weight: bold;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .phonetic {
-      font-size: 16px;
+      font-size: 15px;
       color: var(--subtext);
-      margin-bottom: 20px;
+      margin-bottom: 12px;
+    }
+
+    .myanmar-meaning {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 16px;
+      border-top: 1px dashed var(--border);
+      padding-top: 12px;
     }
 
     .audio-btn {
       background: #eff6ff;
       border: 1px solid #bfdbfe;
       color: var(--primary);
-      padding: 10px 20px;
-      border-radius: 25px;
+      padding: 8px 16px;
+      border-radius: 20px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 14px;
-      transition: background 0.2s;
+      font-size: 13px;
     }
 
-    .audio-btn:active {
-      background: #dbeafe;
-    }
-
-    /* Navigation */
     .navigation {
       display: flex;
       gap: 10px;
-      margin-bottom: 20px;
     }
 
     .nav-btn {
@@ -175,35 +177,62 @@
       cursor: pointer;
     }
 
-    .nav-btn:hover {
-      background: #f8fafc;
+    /* Quiz View UI */
+    .quiz-container {
+      display: none;
     }
 
-    /* Comparison Section */
-    .comparison-box {
-      background: #f8fafc;
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+    .quiz-card {
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      background: #fafafa;
+      margin-bottom: 16px;
     }
 
-    .comp-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--subtext);
-      margin-bottom: 10px;
+    .quiz-question {
+      font-size: 26px;
+      font-weight: bold;
+      color: var(--primary);
+      margin-top: 6px;
     }
 
-    .comp-item {
+    .options-grid {
       display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      font-size: 13px;
-      border-bottom: 1px dashed #e2e8f0;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .comp-item:last-child {
-      border-bottom: none;
+    .option-btn {
+      padding: 14px;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .option-btn.correct {
+      background: #dcfce7 !important;
+      border-color: var(--success) !important;
+      color: var(--success) !important;
+    }
+
+    .option-btn.wrong {
+      background: #fee2e2 !important;
+      border-color: var(--error) !important;
+      color: var(--error) !important;
+    }
+
+    .score-board {
+      text-align: center;
+      font-weight: bold;
+      color: var(--subtext);
+      margin-bottom: 12px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -212,168 +241,211 @@
 <div class="app-container">
   <div class="header">
     <h2>SwiftLingo</h2>
-    <p>Multi-Language Learning Platform for Myanmar</p>
+    <p>Single Language Focus Mode</p>
   </div>
 
-  <!-- Category Filters -->
-  <div class="category-container" id="categoryList">
-    <!-- Populated by JS -->
+  <!-- Target Language Selector -->
+  <div class="target-lang-box">
+    <label>သင်ယူလိုသော ဘာသာစကားကို ရွေးချယ်ပါ:</label>
+    <div class="lang-select-grid">
+      <button class="lang-option-btn active" onclick="setTargetLang('en')">🇬🇧 English → မြန်မာ</button>
+      <button class="lang-option-btn" onclick="setTargetLang('zh')">🇨🇳 Chinese → မြန်မာ</button>
+      <button class="lang-option-btn" onclick="setTargetLang('ja')">🇯🇵 Japanese → မြန်မာ</button>
+      <button class="lang-option-btn" onclick="setTargetLang('th')">🇹🇭 Thai → မြန်မာ</button>
+    </div>
   </div>
 
-  <!-- Language Switcher Tabs -->
-  <div class="lang-switcher">
-    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
-    <button class="lang-btn" onclick="switchLang('zh')">ZH</button>
-    <button class="lang-btn" onclick="switchLang('ja')">JA</button>
-    <button class="lang-btn" onclick="switchLang('th')">TH</button>
+  <!-- Mode Switcher -->
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="switchMode('learn')">📚 စာကျက်ရန် (Learn)</button>
+    <button class="mode-btn" onclick="switchMode('quiz')">🧠 စေမးခွန်းဖြေရန် (Quiz)</button>
   </div>
 
-  <!-- Flashcard -->
-  <div class="flashcard">
-    <div class="myanmar-meaning" id="myanmarText">-</div>
-    <div class="target-word" id="targetWord">-</div>
-    <div class="phonetic" id="phoneticText">-</div>
-    <button class="audio-btn" onclick="playAudio()">🔊 အသံထွက်နားထောင်မည်</button>
+  <!-- LEARN VIEW -->
+  <div id="learnView">
+    <div class="flashcard">
+      <div class="target-word" id="targetWord">-</div>
+      <div class="phonetic" id="phoneticText">-</div>
+      <div class="myanmar-meaning" id="myanmarText">-</div>
+      <button class="audio-btn" onclick="playAudio()">🔊 အသံထွက်နားထောင်မည်</button>
+    </div>
+    <div class="navigation">
+      <button class="nav-btn" onclick="prevCard()">← ရှေ့တစ်ခု</button>
+      <button class="nav-btn" onclick="nextCard()">နောက်တစ်ခု →</button>
+    </div>
   </div>
 
-  <!-- Navigation Buttons -->
-  <div class="navigation">
-    <button class="nav-btn" onclick="prevCard()">← ရှေ့တစ်ခု</button>
-    <button class="nav-btn" onclick="nextCard()">နောက်တစ်ခု →</button>
-  </div>
-
-  <!-- Comparison Box -->
-  <div class="comparison-box">
-    <div class="comp-title">ဘာသာစကားအားလုံး ယှဉ်တွဲကြည့်ရန်</div>
-    <div class="comp-item"><span>English:</span> <strong id="compEn">-</strong></div>
-    <div class="comp-item"><span>Chinese:</span> <strong id="compZh">-</strong></div>
-    <div class="comp-item"><span>Japanese:</span> <strong id="compJa">-</strong></div>
-    <div class="comp-item"><span>Thai:</span> <strong id="compTh">-</strong></div>
+  <!-- QUIZ VIEW -->
+  <div id="quizView" class="quiz-container">
+    <div class="score-board">
+      ရမှတ်: <span id="scoreText" style="color: var(--primary);">0</span> / <span id="totalQuizText">0</span>
+    </div>
+    <div class="quiz-card">
+      <div style="font-size: 13px; color: var(--subtext);">အောက်ပါစာလုံး၏ မြန်မာဘာသာပြန်ကို ရွေးပါ:</div>
+      <div class="quiz-question" id="quizQuestion">-</div>
+    </div>
+    <div class="options-grid" id="optionsContainer">
+      <!-- Dynamic Options -->
+    </div>
+    <button class="nav-btn" id="nextQuizBtn" style="margin-top: 16px; width: 100%; display: none;" onclick="loadNextQuiz()">နောက်မေးခွန်းတစ်ခု →</button>
   </div>
 </div>
 
 <script>
-  // JSON Database Structure
-  const db = {
-    categories: [
-      { id: "all", name: "အားလုံး" },
-      { id: "greetings", name: "👋 နှုတ်ခွန်းဆက်" },
-      { id: "dining", name: "🍜 အစားအသောက်" }
-    ],
-    vocabularies: [
-      {
-        id: "v1",
-        category: "greetings",
-        myanmar: "မင်္ဂလာပါ",
-        translations: {
-          en: { text: "Hello", phonetic: "ဟဲလို", code: "en-US" },
-          zh: { text: "你好", phonetic: "Nǐ hǎo (နီဟောင်)", code: "zh-CN" },
-          ja: { text: "こんにちは", phonetic: "Konnichiwa (ကွန်းနိချိဝါ)", code: "ja-JP" },
-          th: { text: "สวัสดี", phonetic: "Sawasdee (ဆဝါဒီ)", code: "th-TH" }
-        }
-      },
-      {
-        id: "v2",
-        category: "greetings",
-        myanmar: "ကျေးဇူးတင်ပါတယ်။",
-        translations: {
-          en: { text: "Thank you", phonetic: "သန့်ခ်ယူ", code: "en-US" },
-          zh: { text: "谢谢", phonetic: "Xièxie (ရှဲရှဲ)", code: "zh-CN" },
-          ja: { text: "ありがとう", phonetic: "Arigatou (အရိဂါတိုး)", code: "ja-JP" },
-          th: { text: "ขอบคุณ", phonetic: "Khob khun (ခေါပ်ခွန်း)", code: "th-TH" }
-        }
-      },
-      {
-        id: "v3",
-        category: "dining",
-        myanmar: "ဘေလ်ရှင်းမယ် (ပိုက်ဆံရှင်းမယ်)",
-        translations: {
-          en: { text: "Check, please", phonetic: "ချက်ခ် ပလိစ်စ့်", code: "en-US" },
-          zh: { text: "买单", phonetic: "Mǎi dān (မိုင်တန်း)", code: "zh-CN" },
-          ja: { text: "お会計をお願いします", phonetic: "Okaikei o onegaishimasu (အိုကိုင်ကေး)", code: "ja-JP" },
-          th: { text: "เก็บเงินด้วยครับ", phonetic: "Kep nguen duay khrap (ကပ်ပ်ငွန်း)", code: "th-TH" }
-        }
-      }
-    ]
-  };
+  // Vocabulary Database
+  const db = [
+    {
+      myanmar: "မင်္ဂလာပါ",
+      en: { word: "Hello", phonetic: "ဟဲလို", code: "en-US" },
+      zh: { word: "你好", phonetic: "Nǐ hǎo (နီဟောင်)", code: "zh-CN" },
+      ja: { word: "こんにちは", phonetic: "Konnichiwa (ကွန်းနိချိဝါ)", code: "ja-JP" },
+      th: { word: "สวัสดี", phonetic: "Sawasdee (ဆဝါဒီ)", code: "th-TH" }
+    },
+    {
+      myanmar: "ကျေးဇူးတင်ပါတယ်။",
+      en: { word: "Thank you", phonetic: "သန့်ခ်ယူ", code: "en-US" },
+      zh: { word: "谢谢", phonetic: "Xièxie (ရှဲရှဲ)", code: "zh-CN" },
+      ja: { word: "ありがとう", phonetic: "Arigatou (အရိဂါတိုး)", code: "ja-JP" },
+      th: { word: "ขอบคุณ", phonetic: "Khob khun (ခေါပ်ခွန်း)", code: "th-TH" }
+    },
+    {
+      myanmar: "ဘေလ်ရှင်းမယ်",
+      en: { word: "Check, please", phonetic: "ချက်ခ် ပလိစ်စ့်", code: "en-US" },
+      zh: { word: "买单", phonetic: "Mǎi dān (မိုင်တန်း)", code: "zh-CN" },
+      ja: { word: "お会計をお願いします", phonetic: "Okaikei o onegaishimasu (အိုကိုင်ကေး)", code: "ja-JP" },
+      th: { word: "เก็บเงินด้วยครับ", phonetic: "Kep nguen duay khrap (ကပ်ပ်ငွန်း)", code: "th-TH" }
+    },
+    {
+      myanmar: "စားပြီးပြီလား?",
+      en: { word: "Have you eaten?", phonetic: "ဟက်ဗ်ယူ အီးတန်", code: "en-US" },
+      zh: { word: "吃了吗？", phonetic: "Chī le ma? (ချီးလမ)", code: "zh-CN" },
+      ja: { word: "ご飯食べた？", phonetic: "Gohan tabeta? (ဂိုဟန်တာဘဲတ)", code: "ja-JP" },
+      th: { word: "กินข้าวหรือยัง", phonetic: "Kin khaw rue yang (ကင်းခေါဝ်ရူယှမ်း)", code: "th-TH" }
+    }
+  ];
 
-  let currentCategory = "all";
-  let currentLang = "en";
+  let selectedLang = "en"; // Default: English
+  let currentMode = "learn";
   let currentIndex = 0;
-  let filteredVocabs = [...db.vocabularies];
 
-  // Render Categories
-  function initCategories() {
-    const container = document.getElementById('categoryList');
-    container.innerHTML = db.categories.map(cat => `
-      <button class="category-btn ${cat.id === currentCategory ? 'active' : ''}" 
-              onclick="selectCategory('${cat.id}')">
-        ${cat.name}
-      </button>
-    `).join('');
-  }
+  // Quiz State
+  let score = 0;
+  let currentQuizIndex = 0;
+  let isAnswered = false;
 
-  // Filter Categories
-  function selectCategory(catId) {
-    currentCategory = catId;
-    initCategories();
-    filteredVocabs = catId === "all" 
-      ? [...db.vocabularies] 
-      : db.vocabularies.filter(item => item.category === catId);
-    currentIndex = 0;
-    renderCard();
-  }
-
-  // Switch Language Tab
-  function switchLang(lang) {
-    currentLang = lang;
-    document.querySelectorAll('.lang-btn').forEach(btn => {
+  // Change Target Language
+  function setTargetLang(lang) {
+    selectedLang = lang;
+    document.querySelectorAll('.lang-option-btn').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${lang}'`));
     });
-    renderCard();
+
+    if (currentMode === 'learn') renderCard();
+    else resetQuiz();
   }
 
-  // Render Current Flashcard
+  // Switch Mode (Learn vs Quiz)
+  function switchMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if (mode === 'learn') {
+      document.getElementById('learnView').style.display = 'block';
+      document.getElementById('quizView').style.display = 'none';
+      renderCard();
+    } else {
+      document.getElementById('learnView').style.display = 'none';
+      document.getElementById('quizView').style.display = 'block';
+      resetQuiz();
+    }
+  }
+
+  // --- LEARN MODE ---
   function renderCard() {
-    if (filteredVocabs.length === 0) return;
-    const item = filteredVocabs[currentIndex];
-    const trans = item.translations[currentLang];
+    const item = db[currentIndex];
+    const langData = item[selectedLang];
 
+    document.getElementById('targetWord').innerText = langData.word;
+    document.getElementById('phoneticText').innerText = langData.phonetic;
     document.getElementById('myanmarText').innerText = item.myanmar;
-    document.getElementById('targetWord').innerText = trans.text;
-    document.getElementById('phoneticText').innerText = trans.phonetic;
-
-    // Multi-Language Comparison Render
-    document.getElementById('compEn').innerText = `${item.translations.en.text} (${item.translations.en.phonetic})`;
-    document.getElementById('compZh').innerText = `${item.translations.zh.text} (${item.translations.zh.phonetic})`;
-    document.getElementById('compJa').innerText = `${item.translations.ja.text} (${item.translations.ja.phonetic})`;
-    document.getElementById('compTh').innerText = `${item.translations.th.text} (${item.translations.th.phonetic})`;
   }
 
-  // Text-to-Speech
   function playAudio() {
-    if (filteredVocabs.length === 0) return;
-    const trans = filteredVocabs[currentIndex].translations[currentLang];
-    const utterance = new SpeechSynthesisUtterance(trans.text);
-    utterance.lang = trans.code;
+    const langData = db[currentIndex][selectedLang];
+    const utterance = new SpeechSynthesisUtterance(langData.word);
+    utterance.lang = langData.code;
     window.speechSynthesis.speak(utterance);
   }
 
-  // Next / Prev Card
   function nextCard() {
-    if (filteredVocabs.length === 0) return;
-    currentIndex = (currentIndex + 1) % filteredVocabs.length;
+    currentIndex = (currentIndex + 1) % db.length;
     renderCard();
   }
 
   function prevCard() {
-    if (filteredVocabs.length === 0) return;
-    currentIndex = (currentIndex - 1 + filteredVocabs.length) % filteredVocabs.length;
+    currentIndex = (currentIndex - 1 + db.length) % db.length;
     renderCard();
   }
 
-  // App Initialization
-  initCategories();
+  // --- QUIZ MODE ---
+  function resetQuiz() {
+    score = 0;
+    currentQuizIndex = 0;
+    document.getElementById('scoreText').innerText = score;
+    document.getElementById('totalQuizText').innerText = db.length;
+    renderQuiz();
+  }
+
+  function renderQuiz() {
+    isAnswered = false;
+    document.getElementById('nextQuizBtn').style.display = 'none';
+
+    const currentQuestion = db[currentQuizIndex];
+    document.getElementById('quizQuestion').innerText = currentQuestion[selectedLang].word;
+
+    const correctAnswer = currentQuestion.myanmar;
+    let options = [correctAnswer];
+
+    // Wrong options from Myanmar meanings
+    db.forEach((item, index) => {
+      if (index !== currentQuizIndex) {
+        options.push(item.myanmar);
+      }
+    });
+
+    options.sort(() => Math.random() - 0.5);
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = options.map(opt => `
+      <button class="option-btn" onclick="checkAnswer(this, '${opt}', '${correctAnswer}')">${opt}</button>
+    `).join('');
+  }
+
+  function checkAnswer(btn, selected, correct) {
+    if (isAnswered) return;
+    isAnswered = true;
+
+    if (selected === correct) {
+      btn.classList.add('correct');
+      score++;
+      document.getElementById('scoreText').innerText = score;
+    } else {
+      btn.classList.add('wrong');
+      document.querySelectorAll('.option-btn').forEach(b => {
+        if (b.innerText === correct) b.classList.add('correct');
+      });
+    }
+
+    document.getElementById('nextQuizBtn').style.display = 'block';
+  }
+
+  function loadNextQuiz() {
+    currentQuizIndex = (currentQuizIndex + 1) % db.length;
+    renderQuiz();
+  }
+
+  // Initial Render
   renderCard();
 </script>
 
