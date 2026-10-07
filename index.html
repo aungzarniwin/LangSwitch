@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftLingo - Multi-Language Learning App</title>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text: #0f172a;
+      --subtext: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 20px 12px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .header h2 {
+      font-size: 24px;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 13px;
+      color: var(--subtext);
+    }
+
+    /* Category Filter Tabs */
+    .category-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    .category-btn {
+      white-space: nowrap;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #f1f5f9;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .category-btn.active {
+      background: var(--text);
+      color: white;
+      border-color: var(--text);
+    }
+
+    /* Swift Language Switcher */
+    .lang-switcher {
+      display: flex;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .lang-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--subtext);
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Flashcard UI */
+    .flashcard {
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      background: #fafafa;
+    }
+
+    .myanmar-meaning {
+      font-size: 26px;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .target-word {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .phonetic {
+      font-size: 16px;
+      color: var(--subtext);
+      margin-bottom: 20px;
+    }
+
+    .audio-btn {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: var(--primary);
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .audio-btn:active {
+      background: #dbeafe;
+    }
+
+    /* Navigation */
+    .navigation {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .nav-btn {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover {
+      background: #f8fafc;
+    }
+
+    /* Comparison Section */
+    .comparison-box {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .comp-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--subtext);
+      margin-bottom: 10px;
+    }
+
+    .comp-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .comp-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="header">
+    <h2>SwiftLingo</h2>
+    <p>Multi-Language Learning Platform for Myanmar</p>
+  </div>
+
+  <!-- Category Filters -->
+  <div class="category-container" id="categoryList">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Language Switcher Tabs -->
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+    <button class="lang-btn" onclick="switchLang('zh')">ZH</button>
+    <button class="lang-btn" onclick="switchLang('ja')">JA</button>
+    <button class="lang-btn" onclick="switchLang('th')">TH</button>
+  </div>
+
+  <!-- Flashcard -->
+  <div class="flashcard">
+    <div class="myanmar-meaning" id="myanmarText">-</div>
+    <div class="target-word" id="targetWord">-</div>
+    <div class="phonetic" id="phoneticText">-</div>
+    <button class="audio-btn" onclick="playAudio()">🔊 အသံထွက်နားထောင်မည်</button>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="navigation">
+    <button class="nav-btn" onclick="prevCard()">← ရှေ့တစ်ခု</button>
+    <button class="nav-btn" onclick="nextCard()">နောက်တစ်ခု →</button>
+  </div>
+
+  <!-- Comparison Box -->
+  <div class="comparison-box">
+    <div class="comp-title">ဘာသာစကားအားလုံး ယှဉ်တွဲကြည့်ရန်</div>
+    <div class="comp-item"><span>English:</span> <strong id="compEn">-</strong></div>
+    <div class="comp-item"><span>Chinese:</span> <strong id="compZh">-</strong></div>
+    <div class="comp-item"><span>Japanese:</span> <strong id="compJa">-</strong></div>
+    <div class="comp-item"><span>Thai:</span> <strong id="compTh">-</strong></div>
+  </div>
+</div>
+
+<script>
+  // JSON Database Structure
+  const db = {
+    categories: [
+      { id: "all", name: "အားလုံး" },
+      { id: "greetings", name: "👋 နှုတ်ခွန်းဆက်" },
+      { id: "dining", name: "🍜 အစားအသောက်" }
+    ],
+    vocabularies: [
+      {
+        id: "v1",
+        category: "greetings",
+        myanmar: "မင်္ဂလာပါ",
+        translations: {
+          en: { text: "Hello", phonetic: "ဟဲလို", code: "en-US" },
+          zh: { text: "你好", phonetic: "Nǐ hǎo (နီဟောင်)", code: "zh-CN" },
+          ja: { text: "こんにちは", phonetic: "Konnichiwa (ကွန်းနိချိဝါ)", code: "ja-JP" },
+          th: { text: "สวัสดี", phonetic: "Sawasdee (ဆဝါဒီ)", code: "th-TH" }
+        }
+      },
+      {
+        id: "v2",
+        category: "greetings",
+        myanmar: "ကျေးဇူးတင်ပါတယ်။",
+        translations: {
+          en: { text: "Thank you", phonetic: "သန့်ခ်ယူ", code: "en-US" },
+          zh: { text: "谢谢", phonetic: "Xièxie (ရှဲရှဲ)", code: "zh-CN" },
+          ja: { text: "ありがとう", phonetic: "Arigatou (အရိဂါတိုး)", code: "ja-JP" },
+          th: { text: "ขอบคุณ", phonetic: "Khob khun (ခေါပ်ခွန်း)", code: "th-TH" }
+        }
+      },
+      {
+        id: "v3",
+        category: "dining",
+        myanmar: "ဘေလ်ရှင်းမယ် (ပိုက်ဆံရှင်းမယ်)",
+        translations: {
+          en: { text: "Check, please", phonetic: "ချက်ခ် ပလိစ်စ့်", code: "en-US" },
+          zh: { text: "买单", phonetic: "Mǎi dān (မိုင်တန်း)", code: "zh-CN" },
+          ja: { text: "お会計をお願いします", phonetic: "Okaikei o onegaishimasu (အိုကိုင်ကေး)", code: "ja-JP" },
+          th: { text: "เก็บเงินด้วยครับ", phonetic: "Kep nguen duay khrap (ကပ်ပ်ငွန်း)", code: "th-TH" }
+        }
+      }
+    ]
+  };
+
+  let currentCategory = "all";
+  let currentLang = "en";
+  let currentIndex = 0;
+  let filteredVocabs = [...db.vocabularies];
+
+  // Render Categories
+  function initCategories() {
+    const container = document.getElementById('categoryList');
+    container.innerHTML = db.categories.map(cat => `
+      <button class="category-btn ${cat.id === currentCategory ? 'active' : ''}" 
+              onclick="selectCategory('${cat.id}')">
+        ${cat.name}
+      </button>
+    `).join('');
+  }
+
+  // Filter Categories
+  function selectCategory(catId) {
+    currentCategory = catId;
+    initCategories();
+    filteredVocabs = catId === "all" 
+      ? [...db.vocabularies] 
+      : db.vocabularies.filter(item => item.category === catId);
+    currentIndex = 0;
+    renderCard();
+  }
+
+  // Switch Language Tab
+  function switchLang(lang) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${lang}'`));
+    });
+    renderCard();
+  }
+
+  // Render Current Flashcard
+  function renderCard() {
+    if (filteredVocabs.length === 0) return;
+    const item = filteredVocabs[currentIndex];
+    const trans = item.translations[currentLang];
+
+    document.getElementById('myanmarText').innerText = item.myanmar;
+    document.getElementById('targetWord').innerText = trans.text;
+    document.getElementById('phoneticText').innerText = trans.phonetic;
+
+    // Multi-Language Comparison Render
+    document.getElementById('compEn').innerText = `${item.translations.en.text} (${item.translations.en.phonetic})`;
+    document.getElementById('compZh').innerText = `${item.translations.zh.text} (${item.translations.zh.phonetic})`;
+    document.getElementById('compJa').innerText = `${item.translations.ja.text} (${item.translations.ja.phonetic})`;
+    document.getElementById('compTh').innerText = `${item.translations.th.text} (${item.translations.th.phonetic})`;
+  }
+
+  // Text-to-Speech
+  function playAudio() {
+    if (filteredVocabs.length === 0) return;
+    const trans = filteredVocabs[currentIndex].translations[currentLang];
+    const utterance = new SpeechSynthesisUtterance(trans.text);
+    utterance.lang = trans.code;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Next / Prev Card
+  function nextCard() {
+    if (filteredVocabs.length === 0) return;
+    currentIndex = (currentIndex + 1) % filteredVocabs.length;
+    renderCard();
+  }
+
+  function prevCard() {
+    if (filteredVocabs.length === 0) return;
+    currentIndex = (currentIndex - 1 + filteredVocabs.length) % filteredVocabs.length;
+    renderCard();
+  }
+
+  // App Initialization
+  initCategories();
+  renderCard();
+</script>
+
+</body>
+</html>
